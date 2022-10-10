@@ -5,6 +5,7 @@
 [Maria Alexa](https://github.com/maia-leca)
 [Thomas Kientz](https://github.com/thom_ktz)
 [Lucas Saban](https://github.com/g0bel1n) 
+[SACHA APELBAUM](https://github.com/SachaApelbaum)
 
 
 ## Get Started 
