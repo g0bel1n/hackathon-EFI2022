@@ -34,7 +34,7 @@ pip install -r requirements.txt
 ```
 
 ** dont forget to pull then push frequently ! **
-
+** communication is key **
 ## Temporary message board | To-do | Ideas
 - Mettre Prohpet et DARTS dans l'env pour le forecasting de time-series
 - Fouiller les compétitions kaggle de portfolio optimization
