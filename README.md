@@ -33,9 +33,10 @@ If using pip :
 pip install -r requirements.txt
 ```
 
-** dont forget to pull frequently ! **
+** dont forget to pull then push frequently ! **
 
 ## Temporary message board | To-do | Ideas
 - Mettre Prohpet et DARTS dans l'env pour le forecasting de time-series
 - Fouiller les compétitions kaggle de portfolio optimization
 - Algo genetique  
+
