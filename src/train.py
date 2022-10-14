@@ -36,7 +36,7 @@ def train(n_epoch : int = 100):
             
 
             for T in range(env.timespan):
-                x_t = env.get_state(t=T,window = M)
+                x_t, r_t = env.get_state(t=T,window = M)
                 #get F from agent(x_t)
                 #env.set_action(F)
                 # if n=n_epoch-1 :

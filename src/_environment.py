@@ -49,7 +49,7 @@ class Environment:
     def get_state(self,t:int, window : int):
         selected_returns = self.returns[t:t-window,:].flatten()
         last_F_s = self.F_s[-1]
-        return np.array([1, *selected_returns, *last_F_s])
+        return np.array([1, *selected_returns, *last_F_s]), self.returns.flatten()
 
     def set_action(self, F_t):
         self.F_s.append(F_t)

@@ -34,7 +34,7 @@ class Agent():
         self.F = self.activation(x @ self.theta)
         return self.F
     
-    def compute_A_B_R(self, r) -> None:
+    def compute_A_B_R(self, r):
         """Computes A, B and R values
         """
         A = 0
@@ -61,17 +61,17 @@ class Agent():
             F (_type_): _description_
         """
         F = self.forward(x)
-        A, B, R = self.compute_A_B_R(r)
-        S = self.sharpe_ratio()
+        A, _, R = self.compute_A_B_R(r)
+        S = self.compute_sharpe_ratio()
         
         s_d_theta = 0
         F_d_theta = np.zeros(self.N)
-        for t in range(1, T+1):
+        for t in range(1, self.T+1):
             first_term = (S * (1 + S**2) * A - S**3 * R[t]) / (A**2 * self.T)
             sgn =  np.sign(F[t,:] - F[t-1,:])
-            second_term = (-self.mu * self.delta * sgn) * (1 - F[t,:] @ F[t,:]) * (x[t] + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :] * F_d_theta) - (r[t]*self.mu + self.mu*self.delta*sgn) * F_d_theta
+            second_term = (-self.mu * self.delta * sgn) * (1 - F[t,:] @ F[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :] * F_d_theta) - (r[t]*self.mu + self.mu*self.delta*sgn) * F_d_theta
             s_d_theta += first_term * second_term
-            F_d_theta = (1- F[t,:] @ F[t,:]) * (x[t] + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]*F_d_theta)
+            F_d_theta = (1- F[t,:] @ F[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]*F_d_theta)
         self.s_d_theta = s_d_theta
     
     def gradient_ascent(self) -> None:
