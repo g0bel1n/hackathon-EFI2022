@@ -29,7 +29,7 @@ class Agent():
         self.delta = delta
         self.T = T
         self.activation = tanh if N == 1 else softmax_o_sigmoid
-        self.theta = np.random.normal(size=((self.M+1) * self.N + 1 + self.N, self.N))
+        self.theta = np.random.normal(size=(self.M+3))
     
     
     def forward(self, x) -> np.ndarray:
@@ -51,13 +51,10 @@ class Agent():
         A = 0
         B = 0
         R = [0]
-        print('F_s: ', F_s.shape)
-        print('r: ', r.shape)
-        print(self.T)
        
         for t in range(self.T-self.M):
 
-            R_t = self.mu * (F_s[t,:]@r[t,:] - self.delta * np.linalg.norm(F_s[t,:]- F_s[t-1,:], ord=1))
+            R_t = self.mu * (F_s[t,:] @ r[t,:] - self.delta * np.linalg.norm(F_s[t,:]- F_s[t-1,:], ord=1))
             R.append(R_t)
             A += R[t]
             B += R[t]**2
@@ -80,17 +77,14 @@ class Agent():
         S = self.compute_sharpe_ratio()
         
         s_d_theta = 0
-        F_d_theta = np.zeros(self.N)
+        F_d_theta = np.zeros(size=(self.N, self.M+3))
         for t in range(self.T-self.M):
             first_term = (S * (1 + S**2) * A - S**3 * R[t]) / (A**2 * self.T)
             sgn =  np.sign(F_s[t,:] - F_s[t-1,:])
-            print(' F_d_theta: ',  F_d_theta.shape)
-            print('self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]: ', self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :].shape)
-            print('x: ', x.shape)
-            second_term = (-self.mu * self.delta * sgn) * (1 - F_s[t,:] @ F_s[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :] * F_d_theta) - (r[t,:]*self.mu + self.mu*self.delta*sgn) * F_d_theta
+            second_term = (-self.mu * self.delta * sgn) * (1 - F_s[t,:] @ F_s[t,:]) * (x + self.theta[-1] * F_d_theta) - (r[t,:]*self.mu + self.mu*self.delta*sgn) * F_d_theta
 
             s_d_theta += first_term * second_term
-            F_d_theta = (1- F_s[t,:] @ F_s[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]*F_d_theta)
+            F_d_theta = (1- F_s[t,:] @ F_s[t,:]) * (x + self.theta[-1]*F_d_theta)
         self.s_d_theta = s_d_theta
     
     def gradient_ascent(self) -> None:
