@@ -3,25 +3,6 @@ from math import sqrt
 from activation import tanh, softmax_o_sigmoid
 
 
-
-#N number of assets
-"""
-def s_derivated_calculation():
-    A, B, R= R_calculation(N, mu, delta,T,  r, F)
-    S=A/math.sqrt(B-A**2)
-    s_d_theta=0
-    F_d_theta=np.zeros(N)
-    for t in range(1, T+1):
-        first_term= (S*(1+S**2)*A - S**3*R[t])/(A**2*T)
-        sgn =  np.sign(F[t,:] - F[t-1,:])
-        second_term = ( (-1)*mu*delta*sgn)*(1- F[t,:] @ F[t,:])*(x[t] +  theta[1+(M+1)*N :1+N*(M+2),: ]*F_d_theta)+ ((-1)*r[t]*mu + mu*delta*sgn)*F_d_theta)
-        s_d_theta+= first_term*second_term
-        F_d_theta =(1- F[t,] @ F[t,])*(x[t] + theta[1+(M+1)*N :1+N*(M+2), ]*F_d_theta)
-
-    return s_derivated
-""" 
-
-
 class Agent():
     def __init__(self, M, N, rho) -> None:
         """Initalizes the Agent object
@@ -61,6 +42,7 @@ class Agent():
             A += R[t]
             B += R[t]**2
         self.A, self.B, self.R = A/T, B/T, R
+        return self.A, self.B, self.R
         
     def compute_derivatives(self, mu, delta, T, theta, r, x, F) -> None:
         """Computes all derivatives needed for the gradient ascent
@@ -74,11 +56,12 @@ class Agent():
             x (_type_): _description_
             F (_type_): _description_
         """
-        S = self.A / sqrt(self.B - self.A**2)
+        A, B, R = self.compute_A_B_R(mu, delta, T, r, F)
+        S = self.sharpe_ratio()
         s_d_theta = 0
         F_d_theta = np.zeros(self.N)
         for t in range(1, T+1):
-            first_term = (S * (1 + S**2) * self.A - S**3 * self.R[t]) / (self.A**2 * T)
+            first_term = (S * (1 + S**2) * A - S**3 * R[t]) / (A**2 * T)
             sgn =  np.sign(F[t,:] - F[t-1,:])
             second_term = (-mu * delta * sgn) * (1 - F[t,:] @ F[t,:]) * (x[t] + theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :] * F_d_theta) - (r[t]*mu + mu*delta*sgn) * F_d_theta
             s_d_theta += first_term * second_term
@@ -88,4 +71,6 @@ class Agent():
     def gradient_ascent(self) -> None:
         self.theta = self.theta + self.rho * self.s_d_theta
         
+    def sharpe_ratio(self) -> float:
+        return self.A / sqrt(self.B - self.A**2)
     
