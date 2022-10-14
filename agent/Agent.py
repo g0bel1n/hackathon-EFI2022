@@ -4,7 +4,7 @@ from activation import tanh, softmax_o_sigmoid
 
 
 class Agent():
-    def __init__(self, M, N) -> None:
+    def __init__(self, M, N, rho) -> None:
         """Initalizes the Agent object
 
         Args:
@@ -12,12 +12,13 @@ class Agent():
             activation (function): Activation function
         """
         self.M = M
-        self.N - N
+        self.N = N
+        self.rho = rho
         self.activation = tanh if N == 1 else softmax_o_sigmoid
-        self.theta = np.random.normal(((self.M+1) * self.N + 1 + self.N, self.N))
+        self.theta = np.random.normal(size=((self.M+1) * self.N + 1 + self.N, self.N))
     
     
-    def forward(self, X, F) -> np.ndarray:
+    def forward(self, X) -> np.ndarray:
         """Forward pass of the agent.
 
         Args:
@@ -27,7 +28,6 @@ class Agent():
         Returns:
             np.ndarray: _description_
         """
-        self.X = np.array([1, * self.theta.flatten(), *X])
         return self.activation(X @ self.theta)
     
     def gradient_ascent(self) -> None:
