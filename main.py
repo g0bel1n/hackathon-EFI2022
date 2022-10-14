@@ -37,8 +37,8 @@ def main():
         for n in range(n_epoch):
             iter_task = iter_progress.add_task("zebi",total=env.timespan)
 
-            for T in range(env.timespan):
-                x_t = env.get_state(t=T,window = M)
+            for t in range(env.timespan):
+                x_t = env.get_state(t=t,window = M)
                 #get F from agent(x_t)
                 #env.set_action(F)
                 #sharpe_ratios.append(agent.get_sharpe())
