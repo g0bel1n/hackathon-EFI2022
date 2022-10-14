@@ -32,6 +32,7 @@ def main():
     Panel(Group(epoch_progress, iter_progress))
 )
 
+    sharpe_ratios = []
     with Live(progress_group):
         for n in range(n_epoch):
             iter_task = iter_progress.add_task("zebi",total=env.timespan)
@@ -40,6 +41,8 @@ def main():
                 x_t = env.get_state(t=T,window = M)
                 #get F from agent(x_t)
                 #env.set_action(F)
+                #sharpe_ratios.append(agent.get_sharpe())
+
                 iter_progress.advance(iter_task)
                 
             env.reset()

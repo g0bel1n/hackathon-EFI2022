@@ -29,7 +29,7 @@ def train(n_epoch : int = 100):
     progress_group = Group(
     Panel(Group(epoch_progress, iter_progress))
 )
-
+    sharpe_ratios = []
     with Live(progress_group):
         for n in range(n_epoch):
             iter_task = iter_progress.add_task("zebi",total=env.timespan)
@@ -42,6 +42,7 @@ def train(n_epoch : int = 100):
                 #update agent
                     #compute grad
                     #blahblah
+                #sharpe_ratios.append(agent.get_sharpe())
                 iter_progress.advance(iter_task)
             env.reset()
             epoch_progress.update(task_id=epoch_task, description=f"{n}")
