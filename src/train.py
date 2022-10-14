@@ -33,17 +33,19 @@ def train(n_epoch : int = 100):
     with Live(progress_group):
         for n in range(n_epoch):
             iter_task = iter_progress.add_task("zebi",total=env.timespan)
+            
 
             for T in range(env.timespan):
                 x_t = env.get_state(t=T,window = M)
                 #get F from agent(x_t)
                 #env.set_action(F)
-                #compute grad(F)
-                #update agent
-                    #compute grad
-                    #blahblah
-                #sharpe_ratios.append(agent.get_sharpe())
+                # if n=n_epoch-1 :
+                    #sharpe_ratios.append(agent.get_sharpe())
                 iter_progress.advance(iter_task)
+            #compute grad(F)
+            #update agent
+                #compute grad
+                #blahblah
             env.reset()
             epoch_progress.update(task_id=epoch_task, description=f"{n}")
             iter_progress.update(task_id=iter_task, visible=False)
