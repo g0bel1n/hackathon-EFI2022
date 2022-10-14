@@ -42,6 +42,7 @@ class Agent():
         Returns:
             np.ndarray: _description_
         """
+
         self.F = self.activation(x @ self.theta)
         return self.F
     
@@ -51,6 +52,10 @@ class Agent():
         A = 0
         B = 0
         R = [0]
+<<<<<<< HEAD
+=======
+
+>>>>>>> 546c664702edb23adcb5f3f0c285a82b2ed2c1b6
        
         for t in range(self.T-self.M):
 
@@ -77,6 +82,7 @@ class Agent():
         S = self.compute_sharpe_ratio()
         
         s_d_theta = 0
+<<<<<<< HEAD
         F_d_theta = np.zeros(size=(self.N, self.M+3))
         for t in range(self.T-self.M):
             first_term = (S * (1 + S**2) * A - S**3 * R[t]) / (A**2 * self.T)
@@ -85,10 +91,28 @@ class Agent():
 
             s_d_theta += first_term * second_term
             F_d_theta = (1- F_s[t,:] @ F_s[t,:]) * (x + self.theta[-1]*F_d_theta)
+=======
+        F_d_theta = np.zeros_like(x)
+        for t in range(self.T-self.M):
+            first_term = (S * (1 + S**2) * A - S**3 * R[t]) / (A**2 * self.T)
+            sgn =  np.sign(F_s[t,:] - F_s[t-1,:])
+            # print(' F_d_theta: ',  F_d_theta.shape)
+            # print('self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]: ', self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :].shape)
+            # print('x: ', x.shape)
+            theta_M_2 = self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :] if self.N>1 else self.theta[self.M+2]
+            second_term = (-self.mu * self.delta * sgn) * (1 - F_s[t,:] @ F_s[t,:]) * (x + theta_M_2 * F_d_theta) - (r[t,:]*self.mu + self.mu*self.delta*sgn) * F_d_theta
+            
+            s_d_theta += first_term * second_term
+    
+            F_d_theta = (1- F_s[t,:] @ F_s[t,:]) * (x + theta_M_2*F_d_theta  )
+
+>>>>>>> 546c664702edb23adcb5f3f0c285a82b2ed2c1b6
         self.s_d_theta = s_d_theta
     
     def gradient_ascent(self) -> None:
-        self.theta = self.theta + self.rho * self.s_d_theta
+
+        self.theta = np.sum((self.theta , (self.rho * self.s_d_theta)))
+        print(self.theta.shape)
         
     def compute_sharpe_ratio(self) -> float:
         self.sharpe_ratio = self.A / sqrt(self.B - self.A**2)
