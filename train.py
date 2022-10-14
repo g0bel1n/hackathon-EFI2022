@@ -20,9 +20,9 @@ logging.basicConfig(
 
 def train(n_epoch : int = 100):
 
-    env = Environment('data/Reinforcement Data.xlsx', end=2370)
+    env = Environment('data/Reinforcement Data.xlsx', end=2370, etfs='CLY')
     M = 104
-    agent = Agent(M=M, N=5, rho=.004, mu=100, delta=0, T=env.timespan)
+    agent = Agent(M=M, N=env.n_etf, rho=.004, mu=100, delta=0, T=env.timespan)
 
     epoch_progress = Progress(TextColumn("[bold blue] Epoch n°{task.description}",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
     iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn())
