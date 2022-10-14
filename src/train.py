@@ -1,15 +1,14 @@
-from _environment import Environment
+import logging
 
+from rich.console import Group
+from rich.live import Live
+from rich.logging import RichHandler
+from rich.panel import Panel
 from rich.progress import (BarColumn, MofNCompleteColumn, Progress,
                            SpinnerColumn, TextColumn, TimeElapsedColumn,
                            TimeRemainingColumn)
 
-from rich.console import Group
-from rich.panel import Panel
-from rich.live import Live
-
-import logging
-from rich.logging import RichHandler
+from _environment import Environment
 
 FORMAT = "%(message)s"
 logging.basicConfig(
@@ -19,10 +18,10 @@ logging.basicConfig(
 
 def train(n_epoch : int = 100):
 
-    env = Environment('data/Reinforcement Data.xlsx')
+    env = Environment('data/Reinforcement Data.xlsx', end=2370)
     M = 104
     #init agent
-    epoch_progress = Progress(TextColumn("[bold blue] Epoch n {task.description}",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
+    epoch_progress = Progress(TextColumn("[bold blue] Epoch n°{task.description}",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
     iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn())
 
     epoch_task = epoch_progress.add_task("0", total=n_epoch+1)

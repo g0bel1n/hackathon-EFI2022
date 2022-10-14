@@ -7,7 +7,8 @@ import pandas as pd
 log = logging.getLogger("rich")
 
 
-def load_etf(etfs_path : str, etfs : Union[str, List[str]]):
+def load_etf(etfs_path : str, etfs : Union[str, List[str]], start = 0, end = None):
+    
     xl_file = pd.ExcelFile(etfs_path)
     available_etfs = xl_file.sheet_names
     dfs = {}
@@ -26,16 +27,20 @@ def load_etf(etfs_path : str, etfs : Union[str, List[str]]):
             X_s.append(xl_file.parse(el).iloc[:, 0].str.split(',', expand=True).iloc[:,4].to_numpy(np.float64))
         X = np.array(X_s).T
 
-    X = np.log(X)
+    if end is None :
+        end = X.shape[0]
+
+
+    X = np.log(X)[start:end]
 
     return np.diff(X)
 
 
 class Environment: 
 
-    def __init__(self, etfs_path : str):
+    def __init__(self, etfs_path : str, start=0, end=None):
         
-        self.returns = load_etf(etfs_path, 'all')
+        self.returns = load_etf(etfs_path, 'all', start, end)
         self.F_s = [[1]]#initialisation
 
         self.timespan = self.returns.shape[0]
