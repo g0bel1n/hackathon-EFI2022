@@ -5,7 +5,7 @@ import logging
 import pandas as pd
 
 log = logging.getLogger("rich")
-
+from rich import print
 
 def load_etf(etfs_path : str, etfs : Union[str, List[str]], start = 0, end = None):
     
@@ -59,7 +59,7 @@ class Environment:
 
     def reset(self):
         self.F_s = [[1]]
-        log.info("Env was reset")
+        print("Env was reset :weary:")
 
 
 

@@ -23,7 +23,7 @@ def main():
     n_epoch = 10
 
     #init agent
-    epoch_progress = Progress(TextColumn("[bold blue] Epoch n°{task.description}",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
+    epoch_progress = Progress(TextColumn("[bold blue] Epoch n°{task.description}",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn(),TextColumn(' ]'))
     iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn())
 
     epoch_task = epoch_progress.add_task("0", total=n_epoch+1)
@@ -32,14 +32,17 @@ def main():
     Panel(Group(epoch_progress, iter_progress))
 )
 
+    sharpe_ratios = []
     with Live(progress_group):
         for n in range(n_epoch):
             iter_task = iter_progress.add_task("zebi",total=env.timespan)
 
-            for T in range(env.timespan):
-                x_t = env.get_state(t=T,window = M)
+            for t in range(env.timespan):
+                x_t = env.get_state(t=t,window = M)
                 #get F from agent(x_t)
                 #env.set_action(F)
+                #sharpe_ratios.append(agent.get_sharpe())
+
                 iter_progress.advance(iter_task)
                 
             env.reset()
