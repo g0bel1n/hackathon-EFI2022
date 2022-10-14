@@ -52,10 +52,6 @@ class Agent():
         A = 0
         B = 0
         R = [0]
-<<<<<<< HEAD
-=======
-
->>>>>>> 546c664702edb23adcb5f3f0c285a82b2ed2c1b6
        
         for t in range(self.T-self.M):
 
