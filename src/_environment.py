@@ -59,13 +59,9 @@ class Environment:
     def get_state(self,t:int, window : int, is_final = False):
         X = np.ones((self.n_etf,window+2))
         X[:,:window]= self.returns[t-window-1:t,:][::-1].T
-        X[:,] self.F_s[-1]
-        
-        if is_final : 
-            return np.array([1, *selected_returns, *last_F_s]), self.returns[window:], np.array(self.F_s)
+        X[:,-1] = self.F_s[-1]
 
-        else :
-            return np.array([1, *selected_returns, *last_F_s])
+        return (X, self.returns[window:], np.array(self.F_s)) if is_final else X
 
     def set_action(self, F_t):
         self.F_s.append(F_t)
