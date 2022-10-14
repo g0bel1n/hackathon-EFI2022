@@ -8,7 +8,9 @@ from rich.progress import (BarColumn, MofNCompleteColumn, Progress,
                            SpinnerColumn, TextColumn, TimeElapsedColumn,
                            TimeRemainingColumn)
 
-from _environment import Environment
+from src._environment import Environment
+from agent.Agent import Agent
+
 
 FORMAT = "%(message)s"
 logging.basicConfig(
@@ -20,7 +22,8 @@ def train(n_epoch : int = 100):
 
     env = Environment('data/Reinforcement Data.xlsx', end=2370)
     M = 104
-    #init agent
+    agent = Agent(M=M, N=5, rho=.004, mu=100, delta=0, T=env.timespan)
+
     epoch_progress = Progress(TextColumn("[bold blue] Epoch n°{task.description}",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
     iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn())
 
@@ -35,17 +38,16 @@ def train(n_epoch : int = 100):
             iter_task = iter_progress.add_task("zebi",total=env.timespan)
             
 
-            for T in range(env.timespan):
-                x_t, r_t = env.get_state(t=T,window = M)
-                #get F from agent(x_t)
-                #env.set_action(F)
-                # if n=n_epoch-1 :
-                    #sharpe_ratios.append(agent.get_sharpe())
+            for t in range(105,env.timespan):
+                x_t  = env.get_state(t=t,window = M)
+                F = agent.forward(x_t)
+                env.set_action(F)
+                if n==n_epoch-1 :
+                    sharpe_ratios.append(agent.compute_sharpe_ratio())
                 iter_progress.advance(iter_task)
-            #compute grad(F)
-            #update agent
-                #compute grad
-                #blahblah
+            x_T,r, F_s = env.get_state(t=env.timespan, window=M, is_final=True)
+            agent.compute_derivatives(r, x_T, F_s=F_s)
+            agent.gradient_ascent()
             env.reset()
             epoch_progress.update(task_id=epoch_task, description=f"{n}")
             iter_progress.update(task_id=iter_task, visible=False)

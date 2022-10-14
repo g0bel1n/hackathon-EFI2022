@@ -1,6 +1,17 @@
 import numpy as np
 from math import sqrt
-from activation import tanh, softmax_o_sigmoid
+from rich import print
+
+tanh = np.tanh
+
+sigmoid = lambda x: 1 / (1 + np.exp(-x))
+
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=0)
+
+softmax_o_sigmoid = lambda x: softmax(sigmoid(x))
 
 
 class Agent():
@@ -34,21 +45,26 @@ class Agent():
         self.F = self.activation(x @ self.theta)
         return self.F
     
-    def compute_A_B_R(self, r):
+    def _compute_A_B_R(self, r, F_s):
         """Computes A, B and R values
         """
         A = 0
         B = 0
         R = [0]
-        for t in range(1, self.T+1):
-            R_t = self.mu * (np.dot(self.F[t,:],r[t,:]) - self.delta * np.linalg.norm(self.F[t,:]- self.F[t-1,:], ord=1))
+        print('F_s: ', F_s.shape)
+        print('r: ', r.shape)
+        print(self.T)
+       
+        for t in range(self.T-self.M):
+
+            R_t = self.mu * (F_s[t,:]@r[t,:] - self.delta * np.linalg.norm(F_s[t,:]- F_s[t-1,:], ord=1))
             R.append(R_t)
             A += R[t]
             B += R[t]**2
         self.A, self.B, self.R = A/self.T, B/self.T, R
         return self.A, self.B, self.R
         
-    def compute_derivatives(self, r, x) -> None:
+    def compute_derivatives(self, r, x, F_s) -> None:
         """Computes all derivatives needed for the gradient ascent
 
         Args:
@@ -60,18 +76,21 @@ class Agent():
             x (_type_): _description_
             F (_type_): _description_
         """
-        F = self.forward(x)
-        A, _, R = self.compute_A_B_R(r)
+        A, _, R = self._compute_A_B_R(r, F_s=F_s)
         S = self.compute_sharpe_ratio()
         
         s_d_theta = 0
         F_d_theta = np.zeros(self.N)
-        for t in range(1, self.T+1):
+        for t in range(self.T-self.M):
             first_term = (S * (1 + S**2) * A - S**3 * R[t]) / (A**2 * self.T)
-            sgn =  np.sign(F[t,:] - F[t-1,:])
-            second_term = (-self.mu * self.delta * sgn) * (1 - F[t,:] @ F[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :] * F_d_theta) - (r[t]*self.mu + self.mu*self.delta*sgn) * F_d_theta
+            sgn =  np.sign(F_s[t,:] - F_s[t-1,:])
+            print(' F_d_theta: ',  F_d_theta.shape)
+            print('self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]: ', self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :].shape)
+            print('x: ', x.shape)
+            second_term = (-self.mu * self.delta * sgn) * (1 - F_s[t,:] @ F_s[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :] * F_d_theta) - (r[t,:]*self.mu + self.mu*self.delta*sgn) * F_d_theta
+
             s_d_theta += first_term * second_term
-            F_d_theta = (1- F[t,:] @ F[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]*F_d_theta)
+            F_d_theta = (1- F_s[t,:] @ F_s[t,:]) * (x + self.theta[1+(self.M+1)*self.N: 1+self.N*(self.M+2), :]*F_d_theta)
         self.s_d_theta = s_d_theta
     
     def gradient_ascent(self) -> None:
