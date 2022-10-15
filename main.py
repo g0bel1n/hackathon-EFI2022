@@ -34,14 +34,14 @@ def main(etf_name):
     df = pd.DataFrame({"RL" : (train_returns).cumsum(), " B&H" : x_train.cumsum()})
 
     fig1 = px.line(df)
-    fig1.update_layout({'title' :'Cumulative returns' })
+    fig1.update_layout({'title' :'Cumulative returns train set' })
     fig1.show()
 
     test_returns = optPort.returns(agent.positions(x_test))
     df = pd.DataFrame({"RL" : (test_returns).cumsum(), " B&H" : x_test.cumsum()})
 
     fig2 = px.line(df)
-    fig2.update_layout({'title' :'Cumulative returns' })
+    fig2.update_layout({'title' :'Cumulative returns Test set' })
     fig2.show()
 
     fig.write_image(f"figs/{etf_name}_sharpe.png")
