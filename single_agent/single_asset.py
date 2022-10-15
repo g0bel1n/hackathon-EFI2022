@@ -1,15 +1,10 @@
 #%%
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
 from rich.progress import track
 
 
-from single_asset_agent import SingleAssetAgent
-
-
-def load_etf(etfs_path : str, etfs = 'CLY', start = 0, end = 2960):
+def load_etf(etfs_path : str, etfs = 'IWD', start = 0, end = 2960):
 
     xl_file = pd.ExcelFile(etfs_path)
     available_etfs = xl_file.sheet_names
@@ -37,7 +32,7 @@ class DRL_Portfolio_Opt:
 
 
     def returns(self, Ft):
-        T = len(self.etf_returns)
+        T = len(Ft)
         portfolio_returns = Ft[0:T - 1] * self.etf_returns[1:T] - self.delta * np.abs(Ft[1:T] - Ft[0:T - 1])
         return np.concatenate([[0], portfolio_returns])
 
@@ -55,44 +50,3 @@ class DRL_Portfolio_Opt:
 
 
 # %%
-x = load_etf("../../hackathon-efi2022/data/Reinforcement Data.xlsx", etfs='IWD', start=0, end=2000)
-
-x_train = x[:2000]
-x_test = x[2001:]
-
-std = np.std(x_train)
-mean = np.mean(x_train)
-
-x_train = ((x_train - mean) / std).reshape((len(x_train)))
-x_test = ((x_test - mean) / std).reshape((len(x_test)))
-#%%
-
-#%%
-agent = SingleAssetAgent(M=8,lr=0.3)
-optPort = DRL_Portfolio_Opt(x_train, delta=0.0025)
-np.random.seed(0)
-sharpes = optPort.train(agent, epochs=1000)
-
-# %%
-plt.plot(sharpes)
-plt.xlabel('Epoch Number')
-plt.ylabel('Sharpe Ratio')
-
-# %%
-train_returns = optPort.returns(positions(x_train, theta), x_train, 0.0025)
-plt.plot((train_returns).cumsum(), label="Reinforcement Learning Model", linewidth=1)
-plt.plot(x_train.cumsum(), label="Buy and Hold", linewidth=1)
-plt.xlabel('Ticks')
-plt.ylabel('Cumulative Returns');
-plt.legend()
-plt.title("RL Model vs. Buy and Hold - Training Data");
-
-# %%
-test_returns = returns(positions(x_test, theta), x_test, 0.0025)
-plt.plot((test_returns).cumsum(), label="Reinforcement Learning Model", linewidth=1)
-plt.plot(x_test.cumsum(), label="Buy and Hold", linewidth=1)
-plt.xlabel('Ticks')
-plt.ylabel('Cumulative Returns');
-plt.legend()
-plt.title("RL Model vs. Buy and Hold - Test Data");
-
