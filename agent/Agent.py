@@ -100,3 +100,8 @@ class Agent():
         self.sharpe_ratio = self.A / sqrt(self.B - self.A**2)
         return self.sharpe_ratio
     
+    def save(self, filename):
+        np.save(filename, self.theta)
+    
+    def load(self, filename):
+        self.theta = np.load(filename)
