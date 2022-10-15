@@ -21,10 +21,10 @@ logging.basicConfig(
 
 def train(n_epoch : int = 100):
 
-    env = Environment('data/Reinforcement Data.xlsx', end=2370, etfs='all')
+    env = Environment('data/Reinforcement Data.xlsx', end=2370, etfs='CLY')
     M = 104
     agent = Agent(M=M, N=env.n_etf, rho=.004, mu=100, delta=0, T=env.timespan)
-
+    agent.load("weights.npy")
     epoch_progress = Progress(TextColumn("[bold blue] Epoching",), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
     iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), BarColumn(), MofNCompleteColumn())
 
@@ -43,8 +43,6 @@ def train(n_epoch : int = 100):
                 x_t  = env.get_state(t=t,window = M)
                 F = agent.forward(x_t)
                 env.set_action(F)
-                if n==n_epoch-1 :
-                    sharpe_ratios.append(agent.compute_sharpe_ratio())
                 iter_progress.advance(iter_task)
             x_T,r, F_s = env.get_state(t=env.timespan, window=M, is_final=True)
             agent.compute_derivatives(r, x_T, F_s=F_s)
@@ -53,11 +51,15 @@ def train(n_epoch : int = 100):
             epoch_progress.update(task_id=epoch_task, advance=1)
             iter_progress.update(task_id=iter_task, visible=False)
             iter_progress.stop_task(iter_task)
-
-        #agent.save_weights
-
+            sharpe_ratios.append(agent.compute_sharpe_ratio())
 
 
+        agent.save("weights.npy")
+
+        return sharpe_ratios
+
+
+#%%
 if __name__ == "__main__":
 
     train()
