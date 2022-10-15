@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 from rich.progress import track
+from rich import print
 
 
 def load_etf(etfs_path : str, etfs = 'IWD', start = 0, end = 2960):
@@ -33,7 +34,8 @@ class DRL_Portfolio_Opt:
 
     def returns(self, Ft):
         T = len(Ft)
-        portfolio_returns = Ft[0:T - 1] * self.etf_returns[1:T] - self.delta * np.abs(Ft[1:T] - Ft[0:T - 1])
+        portfolio_returns = Ft[: T - 1] * self.etf_returns[1:T] - self.delta * np.abs(Ft[1:T] - Ft[: T - 1])
+
         return np.concatenate([[0], portfolio_returns])
 
 
@@ -45,7 +47,7 @@ class DRL_Portfolio_Opt:
             sharpes[i] = sharpe
         
         
-        print("finished training")
+        print("Training ended whithout issues")
         return sharpes
 
 
