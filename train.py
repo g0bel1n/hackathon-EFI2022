@@ -50,7 +50,7 @@ def train(n_epoch : int = 100):
             agent.compute_derivatives(r, x_T, F_s=F_s)
             agent.gradient_ascent()
             env.reset()
-            epoch_progress.update(task_id=epoch_task, description=f"{n}")
+            epoch_progress.update(task_id=epoch_task, description=f"{n}", advance=1)
             iter_progress.update(task_id=iter_task, visible=False)
             iter_progress.stop_task(iter_task)
 
