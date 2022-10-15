@@ -25,8 +25,8 @@ def train(n_epoch : int = 100):
     M = 104
     agent = Agent(M=M, N=env.n_etf, rho=.004, mu=100, delta=0, T=env.timespan)
 
-    epoch_progress = Progress(TextColumn("[bold blue] Epoch n°{task.description}",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
-    iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), SpinnerColumn(spinner_name='growHorizontal'), BarColumn(), MofNCompleteColumn())
+    epoch_progress = Progress(TextColumn("[bold blue] Epoching",), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
+    iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), BarColumn(), MofNCompleteColumn())
 
     epoch_task = epoch_progress.add_task("0", total=n_epoch+1)
 
@@ -50,7 +50,7 @@ def train(n_epoch : int = 100):
             agent.compute_derivatives(r, x_T, F_s=F_s)
             agent.gradient_ascent()
             env.reset()
-            epoch_progress.update(task_id=epoch_task, description=f"{n}", advance=1)
+            epoch_progress.update(task_id=epoch_task, advance=1)
             iter_progress.update(task_id=iter_task, visible=False)
             iter_progress.stop_task(iter_task)
 
