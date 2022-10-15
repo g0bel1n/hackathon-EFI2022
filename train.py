@@ -20,7 +20,7 @@ logging.basicConfig(
 
 def train(n_epoch : int = 100):
 
-    env = Environment('data/Reinforcement Data.xlsx', end=2370, etfs='CLY')
+    env = Environment('data/Reinforcement Data.xlsx', end=2370, etfs='all')
     M = 104
     agent = Agent(M=M, N=env.n_etf, rho=.004, mu=100, delta=0, T=env.timespan)
 
@@ -38,7 +38,7 @@ def train(n_epoch : int = 100):
             iter_task = iter_progress.add_task("zebi",total=env.timespan)
             
 
-            for t in range(105,env.timespan):
+            for t in range(M+1,env.timespan):
                 x_t  = env.get_state(t=t,window = M)
                 F = agent.forward(x_t)
                 env.set_action(F)

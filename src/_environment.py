@@ -57,9 +57,10 @@ class Environment:
 
 
     def get_state(self,t:int, window : int, is_final = False):
-        X = np.ones((self.n_etf,window+2))
-        X[:,:window]= self.returns[t-window-1:t,:][::-1].T
-        X[:,-1] = self.F_s[-1]
+        X = np.ones((self.n_etf,window+3))
+        X[:,:window+1]= self.returns[t-window-1:t,:][::-1].T
+
+        X[:,-1] = np.array(self.F_s[-1]).reshape((self.n_etf))
 
         return (X, self.returns[window:], np.array(self.F_s)) if is_final else X
 
