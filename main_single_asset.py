@@ -10,7 +10,6 @@ from single_agent import DRL_Portfolio_Opt, SingleAssetAgent, load_etf
 def main(etf_name: str, show: bool):
     x, dates = load_etf("data/Reinforcement Data.xlsx", etfs=etf_name, start=0)
     cut = int(len(x)*0.8)
-    print(cut)
     dates_train, dates_test = dates.iloc[:cut], dates.iloc[cut:]
     x_train = x[:cut]
     x_test = x[cut:]

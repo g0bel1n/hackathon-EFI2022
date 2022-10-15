@@ -65,7 +65,6 @@ def main():
         iter_progress.stop_task(iter_task)
         perfs.append(current_perf)
         
-    print(sharpe_ratios)
     perf_df = pd.DataFrame(data=perfs)
     return perf_df
 
