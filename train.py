@@ -1,3 +1,4 @@
+#%%
 import logging
 
 from rich.console import Group
@@ -60,3 +61,5 @@ def train(n_epoch : int = 100):
 if __name__ == "__main__":
 
     train()
+
+# %%

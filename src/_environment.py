@@ -62,17 +62,18 @@ class Environment:
 
         X[:,-1] = np.array(self.F_s[-1]).reshape((self.n_etf))
 
+        
         return (X, self.returns[window:], np.array(self.F_s)) if is_final else X
 
     def set_action(self, F_t):
-        self.F_s.append(F_t)
+        self.F_s.append(F_t.flatten())
 
     def compute_ratio(self):
         pass
 
     def reset(self):
         self.F_s =[[0]*(self.returns.shape[1])]#i
-        print("Env was reset :weary:")
+        #print("Env was reset :weary:")
 
 
 

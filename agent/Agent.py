@@ -93,8 +93,8 @@ class Agent():
         self.s_d_theta = s_d_theta
     
     def gradient_ascent(self) -> None:
-        self.theta = (self.theta + self.rho * self.s_d_theta).T
-        print("theta", self.theta.shape)
+        self.theta = self.theta + self.rho * self.s_d_theta[0]
+        
         
     def compute_sharpe_ratio(self) -> float:
         self.sharpe_ratio = self.A / sqrt(self.B - self.A**2)
