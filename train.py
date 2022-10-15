@@ -28,7 +28,7 @@ def train(n_epoch : int = 100):
     epoch_progress = Progress(TextColumn("[bold blue] Epoching",), BarColumn(), MofNCompleteColumn(), TextColumn('[ elapsed'), TimeElapsedColumn(), TextColumn('| eta'), TimeRemainingColumn())
     iter_progress = Progress(TextColumn("[bold blue] Run through dataset",), BarColumn(), MofNCompleteColumn())
 
-    epoch_task = epoch_progress.add_task("0", total=n_epoch+1)
+    epoch_task = epoch_progress.add_task("0", total=n_epoch)
 
     progress_group = Group(
     Panel(Group(epoch_progress, iter_progress))
