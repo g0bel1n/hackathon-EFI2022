@@ -7,3 +7,6 @@ requests==2.28.1
 urllib3==1.26.12
 yarg==0.1.9
 rich
+plotly
+numpy 
+pandas
